@@ -3,37 +3,41 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                echo 'ExamNexus pipeline has started.'
-                echo 'Jenkins has loaded this pipeline from the repository.'
+                echo 'Jenkins is connected to GitHub.'
+                checkout scm
             }
         }
 
-        stage('Check Project Files') {
+        stage('Check Docker') {
             steps {
-                sh 'pwd'
-                sh 'ls -la'
-                sh 'test -f docker-compose.yml'
-                echo 'Docker Compose file found!'
+                sh 'docker --version'
+                sh 'docker-compose --version'
             }
         }
 
-        stage('Build Information') {
+        stage('Validate Docker Compose') {
             steps {
-                echo 'Project files checked successfully.'
-                echo 'Next step: configure Docker access for Jenkins.'
+                dir('.') {
+                    sh 'docker-compose config -q'
+                }
+            }
+        }
+
+        stage('Build Project Images') {
+            steps {
+                sh 'docker-compose build'
             }
         }
     }
 
     post {
         success {
-            echo 'ExamNexus pipeline completed successfully!'
+            echo 'SUCCESS: GitHub checkout and Docker image build completed.'
         }
-
         failure {
-            echo 'Pipeline failed. Check Console Output for details.'
+            echo 'BUILD FAILED: Open the Jenkins Console Output to inspect the error.'
         }
     }
 }
