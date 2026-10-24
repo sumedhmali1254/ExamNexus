@@ -21,17 +21,17 @@ const pool = mysql.createPool({
 // Test the connection on startup
 pool.getConnection()
     .then(conn => {
-        console.log('✅ Connected to MySQL database:', process.env.DB_NAME);
+        console.log('Connected to MySQL database:', process.env.DB_NAME);
         conn.release();
     })
     .catch(err => {
-        console.error('❌ MySQL CONNECTION ERROR:', err.code);
-        console.error('   Message:', err.message);
-        console.log('\n   PROBABLE CAUSES:');
-        console.log('   1. MySQL is not running');
-        console.log('   2. Database "' + (process.env.DB_NAME || 'exam_seating_optimizer') + '" does not exist (Run schema.sql)');
-        console.log('   3. Incorrect username/password in .env file');
-        console.log('   4. MySQL user "root" requires a password (check your .env)\n');
+        console.error('MySQL CONNECTION ERROR:', err.code);
+        console.error('Message:', err.message);
+        console.log('\nPROBABLE CAUSES:');
+        console.log('1. MySQL is not running');
+        console.log('2. The database does not exist');
+        console.log('3. The username or password in .env is incorrect');
+        console.log('4. Check your database settings in .env\n');
     });
 
 module.exports = pool;

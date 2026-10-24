@@ -3,48 +3,48 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: dev_root_password
       MYSQL_DATABASE: exam_seating_optimizer
-      MYSQL_USER: exam_user
-      MYSQL_PASSWORD: dev_exam_password
-    ports:
-      - "3308:3306"
+      MYSQL_USER: exam_admin
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
     volumes:
-      - exam_db_data:/var/lib/mysql
-      - ./backend/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - mysql_data:/var/lib/mysql
+  
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent" ]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u\"$$MYSQL_USER\" -p\"$$MYSQL_PASSWORD\""]
       interval: 10s
       timeout: 5s
-      retries: 15
+      retries: 10
       start_period: 30s
 
   backend:
-    image: exam-seating-optimizer-backend:latest
     build:
       context: ./backend
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       PORT: 3000
       DB_HOST: db
-      DB_USER: exam_user
-      DB_PASSWORD: dev_exam_password
+      DB_PORT: 3306
+      DB_USER: exam_admin
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
       DB_NAME: exam_seating_optimizer
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
 
   frontend:
-    image: exam-seating-optimizer-frontend:latest
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - backend
 
 volumes:
-  exam_db_data:
+  mysql_data:
+    external: true
+    name: examseatingoptimizer_exam_db_data

@@ -48,7 +48,7 @@ app.get('/', (req, res) => {
 
 // ---- Start Server ----
 app.listen(PORT, () => {
-    console.log(`\n🎓 Smart Exam Seating Optimizer`);
+    console.log(`\nðŸŽ“ Smart Exam Seating Optimizer`);
     console.log(`   Server running at: http://localhost:${PORT}`);
     console.log(`   Routes: /students, /rooms, /teachers, /settings`);
     console.log(`   Engine: /exam-engine, /seating-rules\n`);
