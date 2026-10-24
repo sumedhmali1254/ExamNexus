@@ -8,7 +8,7 @@ services:
       MYSQL_USER: exam_user
       MYSQL_PASSWORD: dev_exam_password
     ports:
-      - "3307:3306"
+      - "3308:3306"
     volumes:
       - exam_db_data:/var/lib/mysql
       - ./backend/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
@@ -31,7 +31,7 @@ services:
       DB_PASSWORD: dev_exam_password
       DB_NAME: exam_seating_optimizer
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       db:
         condition: service_healthy
